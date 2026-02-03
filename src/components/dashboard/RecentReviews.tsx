@@ -48,8 +48,9 @@ export function RecentReviews() {
                         <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Synchronizing Intelligence</p>
                     </div>
                 ) : reviews.length === 0 ? (
-                    <div className="bg-redstone-card/10 p-20 text-center text-gray-600 border border-gray-900 uppercase tracking-widest text-[10px] font-bold">
-                        No Intelligence Available for this Property
+                    <div className="bg-redstone-card/10 p-20 text-center text-gray-600 border border-gray-900 uppercase tracking-widest text-[10px] font-bold flex flex-col items-center gap-4">
+                        <p>No reviews found - add one manually</p>
+                        <div className="w-12 h-[1px] bg-redstone-red/40"></div>
                     </div>
                 ) : (
                     reviews.map((review) => (

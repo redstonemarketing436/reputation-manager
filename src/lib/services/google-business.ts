@@ -1,12 +1,11 @@
 import { Review, User } from '@/lib/types';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { MOCK_REVIEWS } from '@/lib/mock-data';
 
 /**
  * Client-safe service for review data fetching.
- * This service now strictly queries the Firestore cache, 
- * which is synced server-side via GbpApiService.
+ * This service strictly queries the Firestore cache.
+ * All mock data fallbacks have been removed per strict cache requirements.
  */
 export const GoogleBusinessService = {
     async fetchAllReviews(propertyId: string, user: User | null): Promise<Review[]> {
@@ -23,7 +22,7 @@ export const GoogleBusinessService = {
         }
 
         try {
-            // Priority 1: Firestore Cache (Sync'd by Server)
+            // Strict Requirement: Pull from 'reviews' Firestore collection (Local Cache)
             if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
                 const reviewsRef = collection(db, 'reviews');
                 let q;
@@ -46,25 +45,16 @@ export const GoogleBusinessService = {
                     reviews.push({ id: doc.id, ...data } as Review);
                 });
 
-                if (reviews.length > 0) return reviews;
+                return reviews;
             }
 
-            // Priority 2: Mock Data Fallback
-            console.log('[Mock Data] Using mock reviews as fallback (filtered by RBAC).');
-            let reviews = MOCK_REVIEWS;
-            if (propertyId === 'ALL') {
-                if (!user.assignedProperties.includes('ALL')) {
-                    reviews = reviews.filter(r => user.assignedProperties.includes(r.propertyId));
-                }
-            } else {
-                reviews = reviews.filter(r => r.propertyId === propertyId);
-            }
-            return reviews;
+            // If Firebase is not configured, return empty
+            return [];
 
         } catch (error) {
             console.error('Error in fetchAllReviews:', error);
-            // Final safety fallback
-            return MOCK_REVIEWS.filter(r => propertyId === 'ALL' || r.propertyId === propertyId);
+            // Return empty array instead of mock fallback
+            return [];
         }
     },
 
