@@ -5,11 +5,29 @@ import { StatsCards } from "@/components/dashboard/StatsCards";
 import { PriorityActionsWidget } from "@/components/dashboard/PriorityActionsWidget";
 import { SurveyLinkWidget } from "@/components/dashboard/SurveyLinkWidget";
 import { useAuth } from "@/contexts/AuthContext";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Plus, RefreshCw } from "lucide-react";
+import { syncGbpReviewsAction } from "@/app/actions/gbp-actions";
+import { useState } from "react";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'ADMIN';
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+    try {
+      const result = await syncGbpReviewsAction();
+      console.log('Sync result:', result);
+      // Refresh the page to show new data
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to sync reviews:', error);
+      alert('Communication failure with Google Business API. Ensure your account is connected in Settings.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-12">
@@ -21,10 +39,20 @@ export default function Dashboard() {
 
         <div className="flex flex-wrap items-center gap-6">
           {isAdmin && (
-            <button className="h-14 px-8 text-[10px] font-bold text-gray-400 border border-gray-800 hover:border-redstone-red hover:text-white transition-all rounded-none uppercase tracking-[0.2em] flex items-center gap-3 group">
-              <Plus className="w-4 h-4 text-redstone-red group-hover:scale-125 transition-transform" />
-              Add Property
-            </button>
+            <>
+              <button
+                onClick={handleSync}
+                disabled={isSyncing}
+                className="h-14 px-8 text-[10px] font-bold text-gray-400 border border-gray-800 hover:border-redstone-red hover:text-white transition-all rounded-none uppercase tracking-[0.2em] flex items-center gap-3 group disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 text-redstone-red group-hover:scale-125 transition-transform ${isSyncing ? 'animate-spin' : ''}`} />
+                {isSyncing ? 'Synchronizing Intelligence...' : 'Refresh Intelligence'}
+              </button>
+              <button className="h-14 px-8 text-[10px] font-bold text-gray-400 border border-gray-800 hover:border-redstone-red hover:text-white transition-all rounded-none uppercase tracking-[0.2em] flex items-center gap-3 group">
+                <Plus className="w-4 h-4 text-redstone-red group-hover:scale-125 transition-transform" />
+                Add Property
+              </button>
+            </>
           )}
           <button className="h-14 px-8 text-[10px] font-bold text-white bg-redstone-red hover:bg-red-700 transition-all rounded-none shadow-lg shadow-redstone-red/10 flex items-center gap-4 uppercase tracking-[0.2em] group">
             Export Intelligence

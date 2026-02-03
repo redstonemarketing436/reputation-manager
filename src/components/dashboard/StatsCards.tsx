@@ -29,11 +29,15 @@ export function StatsCards() {
         const avg = total > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / total).toFixed(1) : "0.0";
         const sentiment = total > 0 ? Math.round((reviews.filter(r => r.rating >= 4).length / total) * 100) : 0;
 
+        // Calculate real Response Rate
+        const replied = reviews.filter(r => r.status === 'Replied').length;
+        const responseRate = total > 0 ? Math.round((replied / total) * 100) : 100;
+
         return [
             { label: "Total Reviews", value: total.toString(), sub: "+5.2% vs prev period", icon: Users },
             { label: "Average Rating", value: avg, sub: "Portfolio Benchmark: 4.2", icon: Star, highlight: true },
             { label: "Sentiment Index", value: `${sentiment}%`, sub: "Positive sentiment weight", icon: TrendingUp },
-            { label: "Response Rate", value: "100%", sub: "All locations compliant", icon: Activity },
+            { label: "Response Rate", value: `${responseRate}%`, sub: responseRate === 100 ? "All locations compliant" : `${replied}/${total} reviews replied`, icon: Activity },
         ];
     }, [reviews]);
 
