@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Review } from '@/lib/types';
 import { GoogleBusinessService } from '@/lib/services/google-business';
 import { ReviewAnalysis } from '@/lib/services/ai';
-import { generateReplyAction, analyzeReviewAction } from '@/app/actions/ai-actions';
+import { generateResponseAction, analyzeReviewAction } from '@/app/actions/ai-actions';
 import { replyToReviewAction } from '@/app/actions/gbp-actions';
 import { Star, MessageCircle, User, Wand2, Tag, AlertTriangle } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export function ReviewCard({ review, onReplied }: ReviewCardProps) {
     const handleDraftWithAI = async () => {
         setIsDrafting(true);
         try {
-            const draft = await generateReplyAction(review.content, review.author);
+            const draft = await generateResponseAction(review.content, review.author);
             setReplyText(draft);
         } catch (error) {
             console.error("AI drafting failed", error);

@@ -15,7 +15,7 @@ export interface ReviewAnalysis {
  * Generates a professional reply using Gemini Pro.
  * Runs on the server to protect GEMINI_API_KEY.
  */
-export async function generateReplyAction(reviewContent: string, authorName: string) {
+export async function generateResponseAction(reviewContent: string, authorName: string) {
     if (!process.env.GEMINI_API_KEY) {
         throw new Error("Missing GEMINI_API_KEY");
     }

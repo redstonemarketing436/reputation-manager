@@ -1,4 +1,4 @@
-import { generateReplyAction, analyzeReviewAction, ReviewAnalysis } from "@/app/actions/ai-actions";
+import { generateResponseAction, analyzeReviewAction, ReviewAnalysis } from "@/app/actions/ai-actions";
 
 export type { ReviewAnalysis };
 
@@ -8,7 +8,7 @@ export const AIService = {
      */
     async generateReply(reviewContent: string, authorName: string): Promise<string> {
         try {
-            return await generateReplyAction(reviewContent, authorName);
+            return await generateResponseAction(reviewContent, authorName);
         } catch (error) {
             console.error('Error in AIService.generateReply:', error);
             return "Thank you for your feedback! We appreciate you taking the time to share your insights.";
