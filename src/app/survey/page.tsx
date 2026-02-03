@@ -2,13 +2,13 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Star, CheckCircle, Clock } from 'lucide-react';
+import { Star, CheckCircle, Clock, ChevronLeft } from 'lucide-react';
 
 type SurveyStep = 'rating' | 'feedback-low' | 'success-high' | 'success-low';
 
 function SurveyContent() {
     const searchParams = useSearchParams();
-    const propertyId = searchParams.get('propertyId') || searchParams.get('locationId');
+    const propertyId = searchParams.get('propertyId') || 'prop-1'; // Default for demo
 
     const [rating, setRating] = useState<number>(0);
     const [hoveredRating, setHoveredRating] = useState<number>(0);
@@ -17,16 +17,11 @@ function SurveyContent() {
     const [timeLeft, setTimeLeft] = useState(30);
     const [showBackupLink, setShowBackupLink] = useState(false);
 
-    // Constants
-    const MIN_POSITIVE_RATING = 4;
-    const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=PLACE_ID"; // Placeholder
+    const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=PLACE_ID";
 
     const handleRatingSelect = (selectedRating: number) => {
         setRating(selectedRating);
-        // Log start of survey attempt with property attribution
-        console.log('Rating selected:', { rating: selectedRating, propertyId });
-
-        if (selectedRating >= MIN_POSITIVE_RATING) {
+        if (selectedRating >= 4) {
             setStep('success-high');
         } else {
             setStep('feedback-low');
@@ -34,13 +29,8 @@ function SurveyContent() {
     };
 
     const handleFeedbackSubmit = () => {
-        // Here we would submit the feedback to our backend
-        console.log('Submitting internal feedback:', {
-            rating,
-            feedback,
-            propertyId,
-            timestamp: new Date().toISOString()
-        });
+        // Mock submission
+        console.log('Internal Feedback:', { rating, feedback, propertyId });
         setStep('success-low');
         setTimeLeft(30);
         setShowBackupLink(false);
@@ -65,70 +55,79 @@ function SurveyContent() {
     }, [step, timeLeft]);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-            <div className="bg-white p-8 rounded-2xl shadow-lg max-w-lg w-full text-center transition-all duration-500">
+        <div className="min-h-screen bg-redstone-bg flex flex-col items-center justify-center p-6 font-sans">
+            <div className="bg-redstone-card p-12 rounded-none border border-redstone-card/50 max-w-xl w-full text-center shadow-2xl relative overflow-hidden">
+                {/* Decorative Accent */}
+                <div className="absolute top-0 left-0 w-1 h-full bg-redstone-red"></div>
 
                 {/* Step 1: Initial Rating */}
                 {step === 'rating' && (
-                    <div className="animate-in fade-in zoom-in duration-300">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">How was your experience?</h1>
-                        <p className="text-gray-600 mb-8">Please rate your stay with us.</p>
+                    <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                        <h1 className="text-4xl font-bold text-white mb-4 tracking-tighter">SHARE YOUR EXPERIENCE</h1>
+                        <p className="text-gray-400 mb-12 uppercase tracking-[0.2em] text-[10px] font-bold">Your feedback shapes our community</p>
 
-                        <div className="flex justify-center gap-2 mb-4">
+                        <div className="flex justify-center gap-4 mb-10">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <button
                                     key={star}
-                                    className="transition-transform hover:scale-110 focus:outline-none"
+                                    className="transition-all hover:scale-110 active:scale-95 focus:outline-none"
                                     onMouseEnter={() => setHoveredRating(star)}
                                     onMouseLeave={() => setHoveredRating(0)}
                                     onClick={() => handleRatingSelect(star)}
                                 >
                                     <Star
-                                        className={`w-12 h-12 ${star <= (hoveredRating || rating)
-                                            ? 'fill-yellow-400 text-yellow-400'
-                                            : 'text-gray-200'
-                                            } transition-colors duration-200`}
+                                        className={`w-14 h-14 ${star <= (hoveredRating || rating)
+                                            ? 'fill-redstone-red text-redstone-red'
+                                            : 'text-gray-700'
+                                            } transition-colors duration-300 stroke-[1px]`}
                                     />
                                 </button>
                             ))}
                         </div>
-                        <p className="text-sm text-gray-400">Select a star rating to continue</p>
+                        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Tap a star to begin</p>
                     </div>
                 )}
 
                 {/* Step 2A: High Rating Success */}
                 {step === 'success-high' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle className="w-8 h-8 text-green-600" />
+                    <div className="animate-in fade-in zoom-in duration-700">
+                        <div className="w-20 h-20 rounded-none bg-redstone-bg border border-redstone-red/30 flex items-center justify-center mx-auto mb-10">
+                            <CheckCircle className="w-10 h-10 text-redstone-red stroke-[1.5px]" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">We're glad you enjoyed it!</h2>
-                        <p className="text-gray-600 mb-8">
-                            It would mean the world to us if you could share your experience on Google.
+                        <h2 className="text-3xl font-bold text-white mb-6 tracking-tight uppercase">Exceptional Service</h2>
+                        <p className="text-gray-400 mb-12 leading-relaxed text-sm">
+                            We are delighted you enjoyed your stay. Would you be willing to share this experience publicly on our Google Business Profile?
                         </p>
 
                         <a
                             href={GOOGLE_REVIEW_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center w-full px-6 py-4 text-base font-semibold text-white transition-all bg-blue-600 rounded-xl hover:bg-blue-700 hover:shadow-lg shadow-blue-200"
+                            className="inline-flex items-center justify-center w-full px-8 py-5 text-sm font-bold text-white transition-all bg-redstone-red hover:bg-red-700 rounded-none uppercase tracking-widest"
                         >
-                            Rate us on Google
+                            Post to Google
                         </a>
                     </div>
                 )}
 
                 {/* Step 2B: Low Rating Feedback Form */}
                 {step === 'feedback-low' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
-                        <h2 className="text-xl font-bold text-gray-900 mb-2">We're sorry to hear that.</h2>
-                        <p className="text-gray-600 mb-6">
-                            Please let us know how we can improve. Your feedback goes directly to our management team.
+                    <div className="animate-in fade-in slide-in-from-right-8 duration-500 text-left">
+                        <button
+                            onClick={() => setStep('rating')}
+                            className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-500 hover:text-white mb-8 transition-colors font-bold"
+                        >
+                            <ChevronLeft className="w-3 h-3" /> Back
+                        </button>
+
+                        <h2 className="text-3xl font-bold text-white mb-4 tracking-tighter uppercase">Help Us Improve</h2>
+                        <p className="text-gray-400 mb-10 text-xs italic tracking-wide">
+                            Your feedback will be delivered directly to our executive management team for immediate review.
                         </p>
 
                         <textarea
-                            className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-gray-700 mb-4 h-32 resize-none"
-                            placeholder="Tell us what happened..."
+                            className="w-full p-6 bg-redstone-bg border border-gray-700 focus:border-redstone-red outline-none text-white mb-8 h-48 resize-none rounded-none transition-colors text-sm"
+                            placeholder="Please provide details regarding your experience..."
                             value={feedback}
                             onChange={(e) => setFeedback(e.target.value)}
                         />
@@ -136,63 +135,58 @@ function SurveyContent() {
                         <button
                             onClick={handleFeedbackSubmit}
                             disabled={!feedback.trim()}
-                            className="w-full px-6 py-4 text-base font-semibold text-white transition-colors bg-gray-900 rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full px-8 py-5 text-sm font-bold text-white transition-all bg-redstone-red hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed rounded-none uppercase tracking-widest"
                         >
                             Submit Feedback
-                        </button>
-                        <button
-                            onClick={() => setStep('rating')}
-                            className="w-full mt-3 py-2 text-sm text-gray-500 hover:text-gray-800"
-                        >
-                            Back
                         </button>
                     </div>
                 )}
 
                 {/* Step 3: Low Rating Success & Countdown */}
                 {step === 'success-low' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle className="w-8 h-8 text-blue-600" />
+                    <div className="animate-in fade-in zoom-in duration-700">
+                        <div className="w-20 h-20 rounded-none bg-redstone-bg border border-gray-700 flex items-center justify-center mx-auto mb-10">
+                            <Clock className="w-10 h-10 text-gray-500 stroke-[1.5px]" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Thank you for your feedback.</h2>
-                        <p className="text-gray-600 mb-8">
-                            Our team has been notified and will review your comments shortly.
+                        <h2 className="text-3xl font-bold text-white mb-6 uppercase tracking-tight text-center">Feedback Received</h2>
+                        <p className="text-gray-400 mb-12 text-sm leading-relaxed text-center">
+                            Our management team has been alerted. We appreciate the opportunity to make this right.
                         </p>
 
                         {!showBackupLink ? (
-                            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-100">
-                                <Clock className="w-6 h-6 text-gray-400 mb-2 animate-pulse" />
-                                <p className="text-sm text-gray-500 font-medium">Redirecting in {timeLeft}s...</p>
-                                {/* Visual Progress Bar */}
-                                <div className="w-full h-1 bg-gray-200 mt-4 rounded-full overflow-hidden">
+                            <div className="p-10 bg-redstone-bg/50 border border-gray-800 rounded-none">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold">Processing Record</span>
+                                    <span className="text-[10px] text-redstone-red font-mono">{timeLeft}s</span>
+                                </div>
+                                <div className="w-full h-[2px] bg-gray-900 overflow-hidden">
                                     <div
-                                        className="h-full bg-blue-500 transition-all duration-1000 ease-linear"
+                                        className="h-full bg-redstone-red transition-all duration-1000 ease-linear shadow-[0_0_10px_rgba(186,0,36,0.5)]"
                                         style={{ width: `${(timeLeft / 30) * 100}%` }}
                                     />
                                 </div>
                             </div>
                         ) : (
-                            <div className="animate-in fade-in zoom-in duration-500">
-                                <p className="text-sm text-gray-500 mb-4">Still want to leave a public review?</p>
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                                <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-6 font-bold">Public Review Option</p>
                                 <a
                                     href={GOOGLE_REVIEW_URL}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-medium text-gray-700 transition-all bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300"
+                                    className="inline-flex items-center justify-center w-full px-8 py-5 text-xs font-bold text-gray-400 transition-all border border-gray-800 hover:border-gray-500 hover:text-white rounded-none uppercase tracking-widest"
                                 >
-                                    Leave a review on Google
+                                    Still leave a review on Google
                                 </a>
                             </div>
                         )}
                     </div>
                 )}
-                {/* Debug / Context Info */}
-                {propertyId && (
-                    <div className="mt-8 text-xs text-gray-300">
-                        Property ID: {propertyId}
-                    </div>
-                )}
+
+                {/* Property Context Footer */}
+                <div className="mt-12 pt-8 border-t border-gray-800 flex items-center justify-between">
+                    <p className="text-[10px] uppercase tracking-widest text-gray-600 font-bold italic">Redstone Resident Survey</p>
+                    <p className="text-[10px] font-mono text-gray-700">REF: {propertyId?.toUpperCase()}</p>
+                </div>
             </div>
         </div>
     );
@@ -200,7 +194,7 @@ function SurveyContent() {
 
 export default function SurveyPage() {
     return (
-        <Suspense fallback={<div>Loading survey...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-redstone-bg flex items-center justify-center text-gray-500 uppercase tracking-widest text-[10px]">Initializing...</div>}>
             <SurveyContent />
         </Suspense>
     );

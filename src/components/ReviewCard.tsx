@@ -18,6 +18,7 @@ export function ReviewCard({ review, onReplied }: ReviewCardProps) {
     const [replyText, setReplyText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDrafting, setIsDrafting] = useState(false);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
 
     const handleDraftWithAI = async () => {
@@ -26,16 +27,22 @@ export function ReviewCard({ review, onReplied }: ReviewCardProps) {
             const draft = await generateReplyAction(review.content, review.author);
             setReplyText(draft);
         } catch (error) {
-            console.error('Failed to draft reply', error);
-            alert('AI Drafting failed. Please try again.');
+            console.error("AI drafting failed", error);
         } finally {
             setIsDrafting(false);
         }
     };
 
     const handleAnalyze = async () => {
-        const result = await analyzeReviewAction(review.content);
-        setAnalysis(result);
+        setIsAnalyzing(true);
+        try {
+            const result = await analyzeReviewAction(review.content);
+            setAnalysis(result);
+        } catch (error) {
+            console.error("AI analysis failed", error);
+        } finally {
+            setIsAnalyzing(false);
+        }
     };
 
     const handleSubmitReply = async () => {
@@ -89,18 +96,22 @@ export function ReviewCard({ review, onReplied }: ReviewCardProps) {
                             {review.status}
                         </span>
 
-                        {/* Analysis Badge */}
-                        {analysis ? (
+                        {/* Analysis Badge (Prioritize pre-analyzed data if available) */}
+                        {(analysis || review.category) ? (
                             <div className={`flex items-center gap-2 px-2 py-0.5 rounded-none text-[10px] uppercase tracking-widest font-bold border
-                                ${analysis.isActionable ? 'bg-red-900/20 text-red-500 border-red-900/30' : 'bg-gray-800 text-gray-400 border-gray-700'}
+                                ${(analysis?.isActionable || review.isActionable) ? 'bg-red-900/20 text-red-500 border-red-900/30' : 'bg-gray-800 text-gray-400 border-gray-700'}
                             `}>
                                 <Tag className="w-3 h-3" />
-                                {analysis.category}
-                                {analysis.isActionable && <AlertTriangle className="w-3 h-3 ml-1" />}
+                                {analysis?.category || review.category}
+                                {(analysis?.isActionable || review.isActionable) && <AlertTriangle className="w-3 h-3 ml-1" />}
                             </div>
                         ) : (
-                            <button onClick={handleAnalyze} className="text-[10px] uppercase tracking-widest font-bold text-gray-500 hover:text-white transition-colors">
-                                Analyze
+                            <button
+                                onClick={handleAnalyze}
+                                disabled={isAnalyzing}
+                                className="text-[10px] uppercase tracking-widest font-bold text-gray-500 hover:text-white transition-colors disabled:opacity-50"
+                            >
+                                {isAnalyzing ? 'Analyzing...' : 'Analyze'}
                             </button>
                         )}
                     </div>

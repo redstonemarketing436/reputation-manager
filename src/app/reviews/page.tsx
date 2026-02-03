@@ -1,19 +1,19 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
 import { usePropertyFilter } from '@/contexts/PropertyContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { getReviewsAction } from '@/app/actions/gbp-actions';
+import { getReviewsAction, triggerAiAuditAction } from '@/app/actions/gbp-actions';
 import { Review } from '@/lib/types';
 import { ReviewCard } from '@/components/ReviewCard';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCcw, Sparkles } from 'lucide-react';
 
 export default function ReviewsPage() {
     const { selectedPropertyId } = usePropertyFilter();
     const { user } = useAuth();
     const [reviews, setReviews] = useState<Review[]>([]);
-    const [isLoading, setIsLoading] = useState(true); // Renamed from 'loading' to 'isLoading'
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuditing, setIsAuditing] = useState(false);
 
     const loadReviews = async () => {
         setIsLoading(true);
@@ -25,6 +25,19 @@ export default function ReviewsPage() {
             setReviews([]);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleTriggerAudit = async () => {
+        setIsAuditing(true);
+        try {
+            const result = await triggerAiAuditAction();
+            console.log('AI Audit Complete:', result);
+            await loadReviews();
+        } catch (error) {
+            console.error("Audit failed", error);
+        } finally {
+            setIsAuditing(false);
         }
     };
 
@@ -41,12 +54,25 @@ export default function ReviewsPage() {
                     <h1 className="text-3xl font-bold text-white tracking-tight">Review Feed</h1>
                     <p className="text-gray-400 mt-2 text-sm italic">Manage and respond to customer reviews from Google Business Profile.</p>
                 </div>
-                <button
-                    onClick={loadReviews}
-                    className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white border border-gray-700 hover:border-white px-4 py-2 transition-all uppercase tracking-widest"
-                >
-                    Refresh Feed
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleTriggerAudit}
+                        disabled={isAuditing}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-redstone-red bg-redstone-red/10 border border-redstone-red/20 hover:bg-redstone-red/20 transition-all rounded-none uppercase tracking-widest disabled:opacity-50"
+                        title="Run AI categorization on all un-analyzed reviews"
+                    >
+                        <Sparkles className={`w-3.5 h-3.5 ${isAuditing ? 'animate-pulse' : ''}`} />
+                        {isAuditing ? 'Auditing...' : 'AI Audit'}
+                    </button>
+                    <button
+                        onClick={loadReviews}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white border border-gray-700 hover:border-white px-4 py-2 transition-all uppercase tracking-widest"
+                    >
+                        <RefreshCcw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+                        Refresh Feed
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-8 pb-20">

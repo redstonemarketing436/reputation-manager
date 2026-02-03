@@ -59,7 +59,12 @@ export const GoogleBusinessService = {
                 let q;
 
                 if (propertyId === 'ALL') {
-                    q = query(reviewsRef, orderBy('date', 'desc'));
+                    // Critical Refinement: If fetching 'ALL', strictly limit to user's assigned properties
+                    if (user.assignedProperties.includes('ALL')) {
+                        q = query(reviewsRef, orderBy('date', 'desc'));
+                    } else {
+                        q = query(reviewsRef, where('propertyId', 'in', user.assignedProperties), orderBy('date', 'desc'));
+                    }
                 } else {
                     q = query(reviewsRef, where('propertyId', '==', propertyId), orderBy('date', 'desc'));
                 }
@@ -75,9 +80,13 @@ export const GoogleBusinessService = {
             }
 
             // Priority 3: Mock Data Fallback
-            console.log('[Mock Data] Using mock reviews as fallback.');
+            console.log('[Mock Data] Using mock reviews as fallback (filtered by RBAC).');
             let reviews = MOCK_REVIEWS;
-            if (propertyId !== 'ALL') {
+            if (propertyId === 'ALL') {
+                if (!user.assignedProperties.includes('ALL')) {
+                    reviews = reviews.filter(r => user.assignedProperties.includes(r.propertyId));
+                }
+            } else {
                 reviews = reviews.filter(r => r.propertyId === propertyId);
             }
             return reviews;

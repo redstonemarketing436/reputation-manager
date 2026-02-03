@@ -3,32 +3,24 @@
 import { useState } from 'react';
 import { usePropertyFilter } from '@/contexts/PropertyContext';
 import { Link, Copy, Check } from 'lucide-react';
+import { generateSurveyLink } from '@/lib/utils/survey';
 
 export function SurveyLinkWidget() {
     const { selectedPropertyId } = usePropertyFilter();
     const [copied, setCopied] = useState(false);
 
-    const generateLink = () => {
-        if (typeof window === 'undefined') return '';
-        const baseUrl = window.location.origin;
-        // If 'ALL' is selected, we can't generate a specific property link
-        // In a real app, we might prompt to select a property or generate a generic link
-        const idParam = selectedPropertyId === 'ALL' ? '' : `?propertyId=${selectedPropertyId}`;
-        return `${baseUrl}/survey${idParam}`;
-    };
+    const linkUrl = selectedPropertyId === 'ALL' ? '' : generateSurveyLink(selectedPropertyId);
 
     const handleCopy = async () => {
-        const link = generateLink();
+        if (!linkUrl) return;
         try {
-            await navigator.clipboard.writeText(link);
+            await navigator.clipboard.writeText(linkUrl);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error('Failed to copy', err);
         }
     };
-
-    const linkUrl = generateLink();
 
     return (
         <div className="bg-redstone-card p-10 rounded-none shadow-sm border border-redstone-card/50 flex flex-col justify-center h-full">
@@ -44,7 +36,7 @@ export function SurveyLinkWidget() {
 
             <div className="flex items-center gap-3 bg-redstone-bg p-4 rounded-none border border-gray-700/30">
                 <code className="text-xs text-gray-300 truncate flex-1 font-mono tracking-wider">
-                    {selectedPropertyId === 'ALL' ? 'Select a property...' : `/survey?propertyId=${selectedPropertyId}`}
+                    {selectedPropertyId === 'ALL' ? 'Select a property...' : linkUrl}
                 </code>
                 <button
                     onClick={handleCopy}

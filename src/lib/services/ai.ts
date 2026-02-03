@@ -46,21 +46,20 @@ export const AIService = {
 
         try {
             const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-            const prompt = `Analyze the following property review and return a JSON object with these fields:
-        - category: One of "Maintenance", "Noise", "Staff", "Cleanliness", "Amenities", or "General".
-        - sentiment: "Positive", "Neutral", or "Negative".
-        - isActionable: boolean (true if the review mentions something that needs fixing or specific attention).
-        - summary: A very brief (3-5 words) summary of the main point.
+            const prompt = `Analyze this property review. Return ONLY a valid JSON object.
+            
+            Fields:
+            - category: Exactly one of "Maintenance", "Noise", "Staff", "Cleanliness", "Amenities", or "General".
+            - sentiment: Exactly one of "Positive", "Neutral", or "Negative".
+            - isActionable: boolean (true if specific issues are reported).
+            - summary: 3-5 word summary.
 
-        Review: "${reviewContent}"
-        
-        Return ONLY the raw JSON string, no markdown blocks.`;
+            Review: "${reviewContent}"`;
 
             const result = await model.generateContent(prompt);
             const text = result.response.text();
-
-            // Clean up potential markdown formatting if Gemini adds it
-            const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            const jsonStr = jsonMatch ? jsonMatch[0] : text;
 
             return JSON.parse(jsonStr) as ReviewAnalysis;
         } catch (error) {
