@@ -1,7 +1,7 @@
 "use server";
 
 import { google } from 'googleapis';
-import { db } from '../firebase';
+import { db } from '@/lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { redirect } from 'next/navigation';
 

@@ -35,7 +35,7 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-rl.question('2. Enter the "code" parameter from the URL after you login: ', async (code) => {
+rl.question('2. Enter the "code" parameter from the URL after you login: ', async (code: string) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         console.log('\n3. Your Refresh Token is:\n', tokens.refresh_token);

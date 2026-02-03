@@ -1,0 +1,65 @@
+{
+  "node": {
+    "60596dbb169363e32c5ea7a2f42430c3210ed8cd00": {
+      "workers": {
+        "app/page": {
+          "moduleId": 26593,
+          "async": false,
+          "exportedName": "generateResponseAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "generateResponseAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+    },
+    "403c9512468308b59e23fb61340d2a375aec2ea4e6": {
+      "workers": {
+        "app/page": {
+          "moduleId": 26593,
+          "async": false,
+          "exportedName": "analyzeReviewAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "analyzeReviewAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+    },
+    "703c22cf4c14be109c68bd7fa08880cadadb15dd79": {
+      "workers": {
+        "app/page": {
+          "moduleId": 26593,
+          "async": false,
+          "exportedName": "replyToReviewAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "replyToReviewAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+    },
+    "008c4e6ce59880283aa0424ba89dd4f9f9288e3c32": {
+      "workers": {
+        "app/page": {
+          "moduleId": 26593,
+          "async": false,
+          "exportedName": "syncGbpReviewsAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "syncGbpReviewsAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+    }
+  },
+  "edge": {}
+}

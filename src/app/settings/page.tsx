@@ -4,8 +4,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { User, Bell, Shield, Mail, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
 import { getAuthUrlAction } from '@/app/actions/gbp-auth';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function SettingsPage() {
+function SettingsContent() {
     const { user } = useAuth();
     const searchParams = useSearchParams();
     const authSuccess = searchParams.get('auth_success');
@@ -117,5 +118,18 @@ export default function SettingsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SettingsPage() {
+    return (
+        <Suspense fallback={
+            <div className="max-w-5xl mx-auto space-y-12 animate-pulse">
+                <div className="h-10 w-64 bg-gray-800/50"></div>
+                <div className="h-32 bg-redstone-card/30"></div>
+            </div>
+        }>
+            <SettingsContent />
+        </Suspense>
     );
 }

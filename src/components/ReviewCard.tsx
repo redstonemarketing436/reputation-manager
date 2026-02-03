@@ -50,7 +50,7 @@ export function ReviewCard({ review, onReplied }: ReviewCardProps) {
 
         setIsSubmitting(true);
         try {
-            await GoogleBusinessService.replyToReview(review.id, replyText);
+            await replyToReviewAction(review.propertyId, review.id, replyText);
             setIsReplying(false);
             setReplyText('');
             onReplied();
