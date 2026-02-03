@@ -1,0 +1,65 @@
+{
+  "node": {
+    "60cf6ddff9539771cd2eec56a476d7211218bf4380": {
+      "workers": {
+        "app/reviews/page": {
+          "moduleId": 77270,
+          "async": false,
+          "exportedName": "getReviewsAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+        }
+      },
+      "layer": {
+        "app/reviews/page": "action-browser"
+      },
+      "exportedName": "getReviewsAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+    },
+    "00de442d17ff96ed7b9bd7db00ac417d0610a60c90": {
+      "workers": {
+        "app/reviews/page": {
+          "moduleId": 77270,
+          "async": false,
+          "exportedName": "triggerAiAuditAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+        }
+      },
+      "layer": {
+        "app/reviews/page": "action-browser"
+      },
+      "exportedName": "triggerAiAuditAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-actions.ts"
+    },
+    "607091b9acce95be66d2749dc570c25ec842e3b96f": {
+      "workers": {
+        "app/reviews/page": {
+          "moduleId": 77270,
+          "async": false,
+          "exportedName": "generateResponseAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+        }
+      },
+      "layer": {
+        "app/reviews/page": "action-browser"
+      },
+      "exportedName": "generateResponseAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+    },
+    "4055e38eeb2249b7e92af5e14d233360679ba4b2bc": {
+      "workers": {
+        "app/reviews/page": {
+          "moduleId": 77270,
+          "async": false,
+          "exportedName": "analyzeReviewAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+        }
+      },
+      "layer": {
+        "app/reviews/page": "action-browser"
+      },
+      "exportedName": "analyzeReviewAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/ai-actions.ts"
+    }
+  },
+  "edge": {}
+}

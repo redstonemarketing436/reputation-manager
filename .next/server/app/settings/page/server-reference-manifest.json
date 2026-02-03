@@ -1,0 +1,20 @@
+{
+  "node": {
+    "00dc4c30722d32c45aef022ae09f232aa247e375b0": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": 27352,
+          "async": false,
+          "exportedName": "getAuthUrlAction",
+          "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-auth.ts"
+        }
+      },
+      "layer": {
+        "app/settings/page": "action-browser"
+      },
+      "exportedName": "getAuthUrlAction",
+      "filename": "Desktop/reputation-manager/reputation-manager/src/app/actions/gbp-auth.ts"
+    }
+  },
+  "edge": {}
+}
