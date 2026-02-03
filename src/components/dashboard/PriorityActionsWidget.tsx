@@ -23,13 +23,9 @@ export function PriorityActionsWidget() {
 
     useEffect(() => {
         const fetchReviews = async () => {
-            // In a real app, we might have a specific endpoint for "insights"
-            // For now, we fetch all reviews and filter client-side
             if (!user) return;
-
             try {
                 const data = await GoogleBusinessService.getReviews(selectedPropertyId, user);
-                // Filter for actionable items only
                 const actionable = data.filter(r => r.isActionable);
                 setReviews(actionable);
             } catch (err) {
@@ -52,53 +48,56 @@ export function PriorityActionsWidget() {
         return groups;
     }, [reviews]);
 
-    if (loading) return <div className="animate-pulse h-48 bg-gray-100 rounded-xl"></div>;
+    if (loading) return <div className="animate-pulse h-96 bg-redstone-card/10 border border-gray-900"></div>;
 
-    if (reviews.length === 0) return null; // Don't show section if empty
+    if (reviews.length === 0) return (
+        <div className="bg-redstone-card border border-redstone-card/50 p-12 text-center flex flex-col items-center justify-center min-h-[400px]">
+            <Sparkles className="w-8 h-8 text-gray-800 mb-6 stroke-[1px]" />
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">No Critical Actions Identified</p>
+        </div>
+    );
 
     return (
-
-        <div className="bg-redstone-card rounded-none shadow-sm border border-redstone-card/50 p-10 mb-12">
-            <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-redstone-red/10 text-redstone-red rounded-none">
+        <div className="bg-redstone-card border border-redstone-card/50 p-10 h-full">
+            <div className="flex items-center gap-6 mb-12">
+                <div className="w-12 h-12 bg-redstone-red/10 border border-redstone-red/20 text-redstone-red flex items-center justify-center">
                     <AlertTriangle className="w-6 h-6 stroke-[1.5px]" />
                 </div>
-                <h2 className="text-lg font-bold text-white tracking-tight">Priority Actions</h2>
-                <span className="ml-auto text-xs font-medium bg-redstone-red text-white px-2 py-1 rounded-full">
-                    {reviews.length} Items
-                </span>
+                <div>
+                    <h2 className="text-xl font-bold text-white tracking-tight italic uppercase">Priority Intelligence</h2>
+                    <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest mt-1">High-impact issues requiring immediate address</p>
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-redstone-red font-bold">{reviews.length}</span>
+                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest leading-none">Total</span>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {Object.entries(groupedInsights).map(([category, items]) => {
                     const Icon = CATEGORY_ICONS[category as keyof typeof CATEGORY_ICONS] || MessageSquare;
 
                     return (
-                        <div key={category} className="border border-gray-700/30 rounded-none overflow-hidden bg-redstone-bg/40">
-                            <div className="bg-redstone-bg px-6 py-4 border-b border-gray-700/30 flex items-center justify-between">
+                        <div key={category} className="border border-gray-900 bg-redstone-bg/40 flex flex-col">
+                            <div className="bg-redstone-bg px-6 py-4 border-b border-gray-900 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <Icon className="w-4 h-4 text-redstone-red" />
-                                    <h3 className="font-bold text-white text-xs uppercase tracking-widest">{category}</h3>
+                                    <Icon className="w-4 h-4 text-redstone-red stroke-[1.5px]" />
+                                    <h3 className="font-bold text-white text-[10px] uppercase tracking-[0.2em]">{category}</h3>
                                 </div>
-                                <span className="text-[10px] font-bold text-gray-400 bg-gray-800 border border-gray-700 px-2 py-0.5 rounded-none uppercase tracking-tighter">
-                                    {items.length}
-                                </span>
+                                <span className="text-[9px] font-mono text-gray-400">0{items.length}</span>
                             </div>
-                            <div className="divide-y divide-gray-700/20">
-                                {items.map(review => (
-                                    <div key={review.id} className="p-6 hover:bg-white/5 transition-colors group cursor-pointer">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <p className="text-sm font-bold text-gray-200 tracking-tight">{review.author}</p>
-                                            <span className="text-[10px] text-gray-500 uppercase font-medium">
-                                                {new Date(review.date).toLocaleDateString()}
-                                            </span>
+                            <div className="divide-y divide-gray-900 flex-1">
+                                {items.slice(0, 2).map(review => (
+                                    <div key={review.id} className="p-6 hover:bg-white/5 transition-all group cursor-pointer relative">
+                                        <div className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <ChevronRight className="w-4 h-4 text-redstone-red" />
                                         </div>
-                                        <p className="text-sm text-gray-400 line-clamp-2 mb-4 leading-relaxed">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <p className="text-[10px] font-bold text-white tracking-widest uppercase">{review.author}</p>
+                                        </div>
+                                        <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed font-light font-sans group-hover:text-gray-300 transition-colors">
                                             {review.content}
                                         </p>
-                                        <div className="flex items-center text-[10px] text-redstone-red font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                                            View Review <ChevronRight className="w-3 h-3 ml-1" />
-                                        </div>
                                     </div>
                                 ))}
                             </div>

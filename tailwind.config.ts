@@ -17,9 +17,10 @@ const config: Config = {
                 },
             },
             fontFamily: {
-                sans: ['PP Mori', 'Inter', 'sans-serif'], // Fallback included
+                sans: ['PP Mori', 'Inter', 'sans-serif'],
             },
             borderRadius: {
+                none: '0px',
                 DEFAULT: '0px',
                 xs: '0px',
                 sm: '0px',

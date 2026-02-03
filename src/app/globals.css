@@ -22,21 +22,36 @@
 
 :root {
   --foreground-rgb: 243, 244, 246;
-  /* redstone-text #f3f4f6 */
   --background-start-rgb: 8, 37, 43;
-  /* redstone-bg #08252b */
   --background-end-rgb: 8, 37, 43;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: var(--background-start-rgb);
+  background: #08252b;
   font-family: 'PP Mori', 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure sharp edges globally if not caught by Tailwind */
+/* Force architectural sharp edges globally */
 * {
   border-radius: 0px !important;
+}
+
+/* Custom scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08252b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e4a51;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ba0024;
 }

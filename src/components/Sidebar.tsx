@@ -1,81 +1,87 @@
 "use client";
 
 import Link from 'next/link';
-import { Home, Star, Settings, ChevronLeft, LogOut } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Home, MessageSquare, PieChart, Settings, List, ChevronLeft, ChevronRight, LogOut, Layout } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { MOCK_USERS } from '@/lib/mock-data';
+import { useState } from 'react';
 
 export function Sidebar() {
-    const { user, login } = useAuth();
-
-    // Get initials
-    const initials = user?.name
-        ?.split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2) || '??';
+    const pathname = usePathname();
+    const { user, logout } = useAuth();
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     const menuItems = [
-        { icon: Home, label: 'Dashboard', href: '/' },
-        { icon: Star, label: 'Reviews', href: '/reviews' },
+        { icon: Layout, label: 'Dashboard', href: '/' },
+        { icon: MessageSquare, label: 'Reviews', href: '/reviews' },
+        { icon: PieChart, label: 'Reports', href: '/reports' },
         { icon: Settings, label: 'Settings', href: '/settings' },
     ];
 
     return (
-        <div className="h-screen w-80 bg-redstone-bg border-r border-redstone-card flex flex-col text-gray-400">
-            {/* Logo Area - moved to TopNav typically in this design, but if sidebar stays left: */}
-            {/* Design says "Top Navigation: Create a slim top bar with the 'Redstone' logo on the left" */}
-            {/* So Sidebar might just be icons or secondary nav? 
-               User says: "Sidebar Navigation: * Implement a dark sidebar with a red 'active state' block for the current page" 
-               So we keep the sidebar. We'll remove the Header from Sidebar if it's in TopNav, 
-               but "Redstone" logo is in TopNav. Let's make Sidebar purely nav. */}
-
-            <div className="p-6">
-                {/* Placeholder for spacing if logo is in top bar, or maybe just a menu icon */}
+        <div className={`transition-all duration-300 flex flex-col bg-redstone-bg border-r border-gray-800 h-screen relative z-40 ${isCollapsed ? 'w-20' : 'w-72'}`}>
+            <div className="p-10 pb-6 flex items-center justify-center h-16 shrink-0">
+                {!isCollapsed ? (
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.4em] italic opacity-50">Intelligence</span>
+                ) : (
+                    <div className="h-[1px] w-6 bg-redstone-red"></div>
+                )}
             </div>
 
-            <nav className="flex-1 space-y-2">
-                {menuItems.map((item) => (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`
-                            group flex items-center gap-4 px-8 py-5 transition-colors relative
-                            ${item.href === '/' ? 'text-white bg-redstone-red' : 'hover:bg-redstone-card/10 hover:text-gray-200'}
-                        `}
-                    >
-                        {/* Active State Red Block */}
-                        {item.href === '/' && (
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-redstone-red" />
-                        )}
+            <nav className="flex-1 mt-10">
+                {menuItems.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`
+                                group relative flex items-center px-8 py-5 transition-all
+                                ${isActive ? 'text-white bg-redstone-red/5' : 'text-gray-500 hover:text-gray-200'}
+                            `}
+                        >
+                            {/* Active Red Block */}
+                            {isActive && (
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-redstone-red shadow-[0_0_15px_rgba(186,0,24,0.5)]" />
+                            )}
 
-                        <item.icon className="w-5 h-5 stroke-[1.5px]" />
-                        <span className="font-light tracking-wide text-sm">{item.label}</span>
-                    </Link>
-                ))}
+                            <item.icon className={`w-5 h-5 shrink-0 stroke-[1.2px] transition-colors ${isActive ? 'text-redstone-red' : 'group-hover:text-redstone-red'}`} />
+
+                            {!isCollapsed && (
+                                <span className="ml-5 text-[10px] font-bold uppercase tracking-[0.2em]">{item.label}</span>
+                            )}
+                        </Link>
+                    );
+                })}
             </nav>
 
-            <div className="p-4 border-t border-redstone-card/50">
-                <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-4 px-4 font-bold">Switch User (Test)</p>
-                <div className="flex flex-col gap-2 px-4">
-                    {MOCK_USERS.map((u) => (
-                        <button
-                            key={u.id}
-                            onClick={() => login(u.id)}
-                            className={`text-left text-xs p-2 transition-colors ${user?.id === u.id ? 'bg-redstone-red text-white' : 'hover:bg-redstone-card text-gray-400'}`}
-                        >
-                            {u.name} ({u.role})
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <div className="mt-auto border-t border-gray-900">
+                {!isCollapsed && (
+                    <div className="p-8 pb-4">
+                        <div className="flex items-center gap-4 bg-redstone-card/10 border border-gray-900 p-4">
+                            <div className="w-8 h-8 bg-redstone-red text-white flex items-center justify-center text-[10px] font-bold">
+                                {user?.name?.split(' ').map(n => n[0]).join('') || '??'}
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                                <p className="text-[10px] font-bold text-white truncate uppercase tracking-tighter">{user?.name}</p>
+                                <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest">{user?.role}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
-            <div className="p-4 border-t border-redstone-card/50">
-                {/* Collapsible Arrow (Mock) */}
-                <button className="flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors w-full px-4">
-                    <ChevronLeft className="w-4 h-4" />
-                    <span className="text-xs uppercase tracking-wider">Collapse</span>
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="w-full flex items-center justify-center p-6 text-gray-600 hover:text-white transition-colors border-t border-gray-900 group"
+                >
+                    {isCollapsed ? (
+                        <ChevronRight className="w-4 h-4 text-redstone-red" />
+                    ) : (
+                        <div className="flex items-center gap-3">
+                            <ChevronLeft className="w-4 h-4 group-hover:text-redstone-red transition-colors" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Collapse Menu</span>
+                        </div>
+                    )}
                 </button>
             </div>
         </div>
