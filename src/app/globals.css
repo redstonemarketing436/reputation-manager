@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'PP Mori';
+  src: url('/fonts/PPMori-Regular.woff2') format('woff2'),
+    url('/fonts/PPMori-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Mori';
+  src: url('/fonts/PPMori-SemiBold.woff2') format('woff2'),
+    url('/fonts/PPMori-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --foreground-rgb: 243, 244, 246;
+  /* redstone-text #f3f4f6 */
+  --background-start-rgb: 8, 37, 43;
+  /* redstone-bg #08252b */
+  --background-end-rgb: 8, 37, 43;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: var(--background-start-rgb);
+  font-family: 'PP Mori', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure sharp edges globally if not caught by Tailwind */
+* {
+  border-radius: 0px !important;
+}

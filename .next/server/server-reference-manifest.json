@@ -1,0 +1,50 @@
+{
+  "node": {
+    "60e1dd4b5f77083f314abcbf65b4d9455bde1a5c0e": {
+      "workers": {
+        "app/page": {
+          "moduleId": 19656,
+          "async": false,
+          "exportedName": "generateReplyAction",
+          "filename": "src/app/actions/ai-actions.ts"
+        },
+        "app/reviews/page": {
+          "moduleId": 17042,
+          "async": false,
+          "exportedName": "generateReplyAction",
+          "filename": "src/app/actions/ai-actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser",
+        "app/reviews/page": "action-browser"
+      },
+      "filename": "src/app/actions/ai-actions.ts",
+      "exportedName": "generateReplyAction"
+    },
+    "406f06262b5a40f17bdf4621c6c155e6c4b5fdeebd": {
+      "workers": {
+        "app/page": {
+          "moduleId": 19656,
+          "async": false,
+          "exportedName": "analyzeReviewAction",
+          "filename": "src/app/actions/ai-actions.ts"
+        },
+        "app/reviews/page": {
+          "moduleId": 17042,
+          "async": false,
+          "exportedName": "analyzeReviewAction",
+          "filename": "src/app/actions/ai-actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser",
+        "app/reviews/page": "action-browser"
+      },
+      "filename": "src/app/actions/ai-actions.ts",
+      "exportedName": "analyzeReviewAction"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "DTGwn7q1yFJ+X+7edroDvjel4mtW5n+IKFTjIZR7Rhk="
+}

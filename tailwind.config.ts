@@ -21,13 +21,14 @@ const config: Config = {
             },
             borderRadius: {
                 DEFAULT: '0px',
+                xs: '0px',
                 sm: '0px',
                 md: '0px',
                 lg: '0px',
                 xl: '0px',
                 '2xl': '0px',
                 '3xl': '0px',
-                full: '9999px', // Keep full for avatars if needed, or set to 0px if strict
+                full: '9999px',
             },
         },
     },
