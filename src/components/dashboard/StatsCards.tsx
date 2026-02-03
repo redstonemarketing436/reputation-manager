@@ -1,23 +1,39 @@
 "use client";
 
-import { usePropertyFilter } from '@/contexts/PropertyContext';
-import { MOCK_REVIEWS } from '@/lib/mock-data';
+import { useAuth } from '@/contexts/AuthContext';
+import { GoogleBusinessService } from '@/lib/services/google-business';
+import { Review } from '@/lib/types';
 import { Star, MessageSquare, AlertCircle } from 'lucide-react';
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 export function StatsCards() {
     const { selectedPropertyId } = usePropertyFilter();
 
-    const filteredReviews = useMemo(() => {
-        if (selectedPropertyId === 'ALL') return MOCK_REVIEWS;
-        return MOCK_REVIEWS.filter((r) => r.propertyId === selectedPropertyId);
-    }, [selectedPropertyId]);
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const totalReviews = filteredReviews.length;
+    useEffect(() => {
+        const fetchReviews = async () => {
+            setLoading(true);
+            try {
+                const data = await GoogleBusinessService.getReviews(selectedPropertyId, user);
+                setReviews(data);
+            } catch (err) {
+                console.error("Failed to fetch reviews", err);
+                setReviews([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReviews();
+    }, [selectedPropertyId, user]);
+
+    const totalReviews = reviews.length;
     const avgRating = totalReviews > 0
-        ? (filteredReviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1)
+        ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1)
         : '0.0';
-    const pendingReviews = filteredReviews.filter((r) => r.status === 'PENDING').length;
+    const pendingReviews = reviews.filter((r) => r.status === 'PENDING').length;
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">

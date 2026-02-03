@@ -5,6 +5,7 @@ import { Review } from '@/lib/types';
 import { GoogleBusinessService } from '@/lib/services/google-business';
 import { ReviewAnalysis } from '@/lib/services/ai';
 import { generateReplyAction, analyzeReviewAction } from '@/app/actions/ai-actions';
+import { replyToReviewAction } from '@/app/actions/gbp-actions';
 import { Star, MessageCircle, User, Wand2, Tag, AlertTriangle } from 'lucide-react';
 
 interface ReviewCardProps {

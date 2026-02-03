@@ -1,11 +1,12 @@
 "use client";
 
 import Link from 'next/link';
-import { Home, Star, Settings, ChevronLeft } from 'lucide-react';
+import { Home, Star, Settings, ChevronLeft, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { MOCK_USERS } from '@/lib/mock-data';
 
 export function Sidebar() {
-    const { user } = useAuth();
+    const { user, login } = useAuth();
 
     // Get initials
     const initials = user?.name
@@ -56,8 +57,23 @@ export function Sidebar() {
             </nav>
 
             <div className="p-4 border-t border-redstone-card/50">
+                <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-4 px-4 font-bold">Switch User (Test)</p>
+                <div className="flex flex-col gap-2 px-4">
+                    {MOCK_USERS.map((u) => (
+                        <button
+                            key={u.id}
+                            onClick={() => login(u.id)}
+                            className={`text-left text-xs p-2 transition-colors ${user?.id === u.id ? 'bg-redstone-red text-white' : 'hover:bg-redstone-card text-gray-400'}`}
+                        >
+                            {u.name} ({u.role})
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="p-4 border-t border-redstone-card/50">
                 {/* Collapsible Arrow (Mock) */}
-                <button className="flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors w-full">
+                <button className="flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors w-full px-4">
                     <ChevronLeft className="w-4 h-4" />
                     <span className="text-xs uppercase tracking-wider">Collapse</span>
                 </button>

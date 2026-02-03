@@ -1,21 +1,37 @@
 "use client";
 
 import { usePropertyFilter } from '@/contexts/PropertyContext';
-import { MOCK_REVIEWS, MOCK_PROPERTIES } from '@/lib/mock-data';
+import { useAuth } from '@/contexts/AuthContext';
+import { GoogleBusinessService } from '@/lib/services/google-business';
+import { Review } from '@/lib/types';
 import { ReviewCard } from '../ReviewCard';
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 export function RecentReviews() {
     const { selectedPropertyId } = usePropertyFilter();
+    const { user } = useAuth();
 
-    const filteredReviews = useMemo(() => {
-        let reviews = MOCK_REVIEWS;
-        if (selectedPropertyId !== 'ALL') {
-            reviews = reviews.filter((r) => r.propertyId === selectedPropertyId);
-        }
-        // Sort by date desc
-        return [...reviews].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    }, [selectedPropertyId]);
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            setLoading(true);
+            try {
+                const data = await GoogleBusinessService.getReviews(selectedPropertyId, user);
+                // Sort by date desc
+                const sorted = [...data].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                setReviews(sorted);
+            } catch (err) {
+                console.error("Failed to fetch reviews", err);
+                setReviews([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReviews();
+    }, [selectedPropertyId, user]);
 
     return (
         <div className="space-y-12">
@@ -24,12 +40,16 @@ export function RecentReviews() {
             </div>
 
             <div className="grid grid-cols-1 gap-8">
-                {filteredReviews.length === 0 ? (
+                {loading ? (
+                    <div className="bg-redstone-card p-10 text-center animate-pulse border border-redstone-card/50">
+                        Loading reviews...
+                    </div>
+                ) : reviews.length === 0 ? (
                     <div className="bg-redstone-card p-10 text-center text-gray-500 border border-redstone-card/50">
                         No reviews found.
                     </div>
                 ) : (
-                    filteredReviews.map((review) => (
+                    reviews.map((review) => (
                         <ReviewCard
                             key={review.id}
                             review={review}
